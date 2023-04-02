@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Remove Docker images that have not been *used* in the last ${SINCE}
+
+SINCE=${1:-168h}
+# list first set minus second set
+# i.e. images not used recently
+comm -23 \
+  <(
+    # list images with full IDs \
+    docker images --no-trunc --format '{{ .ID }}' \
+    | sort | uniq
+  ) \
+  <(
+    # list images used recently
+    docker events --since "${SINCE}" --until 0s --filter event=start --format '{{ .From }}' \
+    | sort | uniq
+  )
