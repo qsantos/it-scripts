@@ -5,11 +5,9 @@ import json
 import random
 import string
 import webbrowser
-from argparse import ArgumentParser
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from os import environ
 from sys import exit, stderr
-from typing import Iterator, Tuple
+from typing import Tuple
 from urllib import parse
 
 try:
