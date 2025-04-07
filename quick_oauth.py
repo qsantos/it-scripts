@@ -15,10 +15,9 @@ from urllib import parse
 try:
     import requests
     from requests import Session
-    from oauthlib.oauth2 import WebApplicationClient
 except ModuleNotFoundError:
     print("Please run:", file=stderr)
-    print("pip install oauthlib requests", file=stderr)
+    print("pip install requests", file=stderr)
     exit(1)
 
 
@@ -63,16 +62,16 @@ def get_access_token(
     # get authorization code
     redirect_uri = f"http://localhost:{redirect_port}/"
     with OAuthHttpServer(("", redirect_port), OAuthHttpHandler) as httpd:
-        client = WebApplicationClient(client_id)
-        request_uri = client.prepare_request_uri(
-            uri=authorize_uri,
-            redirect_uri=redirect_uri,
-            scope="api",
-            state="",
-            code_challenge=code_challenge,
-            code_challenge_method="S256",
-        )
-        webbrowser.open_new(request_uri)
+        qs = parse.urlencode({
+            "response_type": "code",
+            "redirect_uri": redirect_uri,
+            "client_id": client_id,
+            "scope": "openid api",
+            "state": "",
+            "code_challenge": code_challenge,
+            "code_challenge_method": "S256",
+        })
+        webbrowser.open_new(f"{authorize_uri}?{qs}")
         httpd.handle_request()
         auth_code = httpd.authorization_code
 
