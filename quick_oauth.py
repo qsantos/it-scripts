@@ -82,7 +82,7 @@ def get_access_token(
         "redirect_uri": redirect_uri,
         "code_verifier": code_verifier,
     }
-    response = requests.post(token_uri, data=data, verify=False)
+    response = requests.post(token_uri, data=data)
     return response.json()["access_token"]
 
 
