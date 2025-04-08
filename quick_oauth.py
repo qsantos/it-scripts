@@ -12,7 +12,6 @@ from urllib.parse import parse_qs, urlencode, urlparse
 
 try:
     import requests
-    from requests import Session
 except ModuleNotFoundError:
     print("Please run:", file=stderr)
     print("pip install requests", file=stderr)
@@ -86,23 +85,4 @@ def get_access_token(
     return response.json()["access_token"]
 
 
-def oauth_session(
-    authorize_uri: str,
-    token_uri: str,
-    client_id: str,
-    secret: str,
-    redirect_port: int,
-) -> Session:
-    access_token = get_access_token(
-        authorize_uri=authorize_uri,
-        token_uri=token_uri,
-        client_id=client_id,
-        secret=secret,
-        redirect_port=redirect_port,
-    )
-    session = Session()
-    session.headers.update({"Authorization": "Bearer " + access_token})
-    return session
-
-
-__ALL__ = ["Session", "get_access_token", "oauth_session"]
+__ALL__ = ["get_access_token"]
