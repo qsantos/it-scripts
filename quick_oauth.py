@@ -8,7 +8,7 @@ import webbrowser
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from sys import exit, stderr
 from typing import Tuple
-from urllib import parse
+from urllib.parse import parse_qs, urlencode, urlparse
 
 try:
     import requests
@@ -31,8 +31,8 @@ class OAuthHttpHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "text/html")
         self.end_headers()
         self.wfile.write("<script>window.close();</script>".encode())
-        parsed = parse.urlparse(self.path)
-        qs = parse.parse_qs(parsed.query)
+        parsed = urlparse(self.path)
+        qs = parse_qs(parsed.query)
         self.server.authorization_code = qs["code"][0]
 
 
@@ -60,7 +60,7 @@ def get_access_token(
     # get authorization code
     redirect_uri = f"http://localhost:{redirect_port}/"
     with OAuthHttpServer(("", redirect_port), OAuthHttpHandler) as httpd:
-        qs = parse.urlencode({
+        qs = urlencode({
             "response_type": "code",
             "redirect_uri": redirect_uri,
             "client_id": client_id,
