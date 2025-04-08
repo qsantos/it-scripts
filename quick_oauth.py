@@ -9,13 +9,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from sys import exit, stderr
 from typing import Tuple
 from urllib.parse import parse_qs, urlencode, urlparse
-
-try:
-    import requests
-except ModuleNotFoundError:
-    print("Please run:", file=stderr)
-    print("pip install requests", file=stderr)
-    exit(1)
+from urrllib.request import urlopen
 
 
 class OAuthHttpServer(HTTPServer):
@@ -81,8 +75,9 @@ def get_access_token(
         "redirect_uri": redirect_uri,
         "code_verifier": code_verifier,
     }
-    response = requests.post(token_uri, data=data)
-    return response.json()["access_token"]
+    with urlopen(token_uri, data=urlencode(data).encode()) as response:
+        resp_data = response.read()
+    return json.loads(resp_data)["access_token"]
 
 
 __ALL__ = ["get_access_token"]
